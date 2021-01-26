@@ -2,7 +2,7 @@ import React from 'react'
 
 const Note = ({ note, toggleImportance }) => {
   const label = note.important
-    ? '価値をなくすで〜' : '重要にするで〜'
+    ? 'do false!' : 'do true!'
   
   return (
     <li>
