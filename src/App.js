@@ -1,12 +1,40 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
 import noteService from './services/notes'
+import './index.css'
+
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    <div style={footerStyle}>
+      <br />
+      <em>Note app, Department of Computer Science, University of Helsinki 2020</em>
+    </div>
+  )
+}
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('') 
   const [showAll, setShowAll] = useState(true)
-  // const [errorMessage, setErrorMessage] = useState('some error happened')
+  const [errorMessage, setErrorMessage] = useState('some error happened')
+
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+  
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
+  }
+  
 
 // dbからデータを取得する
   useEffect(() => {
@@ -36,23 +64,25 @@ const App = () => {
   }
 
 // importanceの値を切り替える
-  const toggleImportanceOf = (id) => {
-    // const url = `http://localhost:3001/notes/${id}`
-    const note = notes.find(n => n.id === id)
+  const toggleImportanceOf = (pushId) => {
+    const note = notes.find(n => n.id === pushId)
     const changedNote = { ...note, important: !note.important }
     
     noteService
-    .update(id, changedNote)
+    .update(pushId, changedNote)
     .then(returnedNote => {
       setNotes(notes.map(note => note.id !== id ? note : returnedNote))
     })
     .catch(error => {
-      alert(
-        `the note '${note.content}' was already deleted from server`
+      setErrorMessage(
+        `Note '${note.content}' was already removed from server`
       )
-      setNotes(notes.filter(n => n.id !== id))
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+      setNotes(notes.filter(n => n.id !== pushId))
     })
-    console.log('idが' + id + 'の重要度を変えるで〜')
+    console.log('idが' + pushId + 'の重要度を変えるで〜')
   }
   
   
@@ -69,7 +99,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
-      {/* <Notefication message={errorMessage} /> */}
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? '重要なやつ' : '全部' }
@@ -92,7 +122,8 @@ const App = () => {
           onChange={handleNoteChange}
         />
         <button type="submit">save</button>
-      </form>   
+      </form>
+      <Footer />
     </div>
   )
 }
