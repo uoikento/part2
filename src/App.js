@@ -3,7 +3,7 @@ import Note from './components/Note'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import NoteForm from './components/NoteForm'
-import Togglable from './components/Togglable';
+import Togglable from './components/Togglable'
 import Footer from './components/Footer'
 import noteService from './services/notes'
 import loginService from './services/login'
@@ -16,6 +16,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const noteFormRef = useRef()
 
 // dbからデータを取得する
   useEffect(() => {
@@ -39,6 +40,7 @@ const App = () => {
 
 // ノートを追加して、dbにpostする
   const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
     noteService
       .create(noteObject)
       .then(returnedNote => {
@@ -100,7 +102,7 @@ const handleLogin = async (event) => {
   )
 
   const noteForm = () => (
-    <Togglable buttonLabel='new note'>
+    <Togglable buttonLabel='new note' ref={noteFormRef}>
       <NoteForm createNote={addNote} />
     </Togglable>
   )
